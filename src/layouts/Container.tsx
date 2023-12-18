@@ -19,4 +19,4 @@ const Container: React.FC<IContainer> = ({ children, className = '' }) => {
   );
 };
 
-export default Container;
+export { Container };
