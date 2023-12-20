@@ -1,8 +1,8 @@
 import type { ChangeEventHandler, FocusEventHandler } from 'react';
-import React from 'react';
+import React, { useState } from 'react';
 import { twJoin } from 'tailwind-merge';
 
-interface InputProps {
+interface PasswordInputProps {
   id?: string;
   value?: string | number;
   handleChange?: ChangeEventHandler<HTMLInputElement> | undefined;
@@ -13,7 +13,7 @@ interface InputProps {
   label?: string;
 }
 
-const Input = ({
+const PasswordInput = ({
   className = '',
   id,
   value,
@@ -21,12 +21,13 @@ const Input = ({
   handleBlur,
   placeholder = '',
   label,
-  error,
-}: InputProps) => {
+}: PasswordInputProps) => {
+  const [isShowPassword] = useState(false);
+
   return (
     <div className="relative">
       <input
-        type="text"
+        type={isShowPassword ? 'password' : 'text'}
         name={id}
         id={id}
         placeholder={placeholder}
@@ -35,7 +36,6 @@ const Input = ({
         onBlur={handleBlur}
         className={twJoin(
           'w-full rounded-md border border-gray-300 px-4 py-2.5 font-inter text-base font-normal leading-6 text-black outline-none',
-          error ? 'border-red-600' : 'border-gray-300',
           className
         )}
       />
@@ -52,4 +52,4 @@ const Input = ({
   );
 };
 
-export { Input };
+export { PasswordInput };

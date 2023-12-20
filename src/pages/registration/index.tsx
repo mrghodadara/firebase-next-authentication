@@ -3,6 +3,9 @@ import React from 'react';
 import * as Yup from 'yup';
 
 import { Input } from '@/Components/Form/Input';
+import { PasswordInput } from '@/Components/Form/PasswordInput';
+import { createUserInDB } from '@/Database/FireStore';
+import { signUpWithEmailAndPassword } from '@/Database/Index';
 import { Container } from '@/Layouts/Container';
 
 const Index = () => {
@@ -15,8 +18,31 @@ const Index = () => {
         password: '',
         confirmPassword: '',
       },
-      validationSchema: Yup.object({}),
-      onSubmit: () => {},
+      validationSchema: Yup.object({
+        firstName: Yup.string().trim().required('Required'),
+        lastName: Yup.string().trim().required('Required'),
+        email: Yup.string().trim().email('Invalid Email').required('Required'),
+        password: Yup.string().trim().required('Required'),
+        confirmPassword: Yup.string().trim().required('Required'),
+      }),
+      onSubmit: ({ email, password, firstName, lastName }) => {
+        signUpWithEmailAndPassword(email, password)
+          .then((response) => {
+            return response;
+          })
+          .then(async (response) => {
+            if (response?.user?.uid) {
+              await createUserInDB({
+                firstName,
+                lastName,
+                email,
+                uid: response?.user?.uid,
+              });
+            }
+          })
+          .catch(() => {})
+          .finally(() => {});
+      },
     });
 
   return (
@@ -29,9 +55,10 @@ const Index = () => {
             </h3>
 
             <form onSubmit={handleSubmit}>
-              <div className="grid grid-cols-2 gap-5">
+              <div className="grid grid-cols-2 gap-8">
                 <div>
                   <Input
+                    label="First Name"
                     id="firstName"
                     placeholder="Enter First Name"
                     value={values?.firstName}
@@ -42,7 +69,59 @@ const Index = () => {
                 </div>
 
                 <div>
-                  <input type="text" name="email" id="email" />
+                  <Input
+                    label="Last Name"
+                    id="lastName"
+                    placeholder="Enter Last Name"
+                    value={values?.lastName}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                    error={touched?.lastName && !!errors?.lastName}
+                  />
+                </div>
+
+                <div className="col-span-2">
+                  <Input
+                    label="Email"
+                    id="email"
+                    placeholder="Enter Email"
+                    value={values?.email}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                    error={touched?.email && !!errors?.email}
+                  />
+                </div>
+
+                <div className="col-span-2">
+                  <PasswordInput
+                    label="Password *"
+                    id="password"
+                    placeholder="Enter Password"
+                    value={values?.password}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                    error={touched?.password && !!errors?.password}
+                  />
+                </div>
+
+                <div className="col-span-2">
+                  <PasswordInput
+                    label="Confirm Password"
+                    id="confirmPassword"
+                    placeholder="Enter Confirm Password"
+                    value={values?.confirmPassword}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                    error={
+                      touched?.confirmPassword && !!errors?.confirmPassword
+                    }
+                  />
+                </div>
+
+                <div className="col-span-2">
+                  <button className="w-full rounded-md bg-blue-600 px-4 py-2 font-inter text-base text-white">
+                    Sign Up
+                  </button>
                 </div>
               </div>
             </form>
