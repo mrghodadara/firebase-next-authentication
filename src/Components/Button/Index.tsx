@@ -1,10 +1,19 @@
 import React from 'react';
+import { twMerge } from 'tailwind-merge';
 
-const Button = () => {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
+
+const Button = ({ ...props }: ButtonProps) => {
   return (
-    <div>
-      <button></button>
-    </div>
+    <button
+      {...props}
+      className={twMerge(
+        'w-full rounded-lg bg-primary px-3 py-2.5 text-center font-inter text-base font-medium leading-6 text-white shadow-input disabled:opacity-80',
+        props?.className
+      )}
+    >
+      {props?.children}
+    </button>
   );
 };
 

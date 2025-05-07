@@ -1,53 +1,48 @@
-import type { ChangeEventHandler, FocusEventHandler } from 'react';
+import type { ReactNode } from 'react';
 import React from 'react';
 import { twJoin } from 'tailwind-merge';
 
-interface InputProps {
-  id?: string;
-  value?: string | number;
-  handleChange?: ChangeEventHandler<HTMLInputElement> | undefined;
-  handleBlur?: FocusEventHandler<HTMLInputElement> | undefined;
-  error?: boolean;
-  className?: string;
-  placeholder?: string;
-  label?: string;
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label?: string; // Optional label prop
+  error?: string; // Optional error message
+  icon?: ReactNode;
 }
 
-const Input = ({
-  className = '',
-  id,
-  value,
-  handleChange,
-  handleBlur,
-  placeholder = '',
-  label,
-  error,
-}: InputProps) => {
+const Input = ({ label, error, icon, ...input }: InputProps) => {
   return (
-    <div className="relative">
-      <input
-        type="text"
-        name={id}
-        id={id}
-        placeholder={placeholder}
-        value={value}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        className={twJoin(
-          'w-full rounded-md border border-gray-300 px-4 py-2.5 font-inter text-base font-normal leading-6 text-black outline-none',
-          error ? 'border-red-600' : 'border-gray-300',
-          className
-        )}
-      />
-
+    <div className="flex w-full flex-col gap-1">
       {label && (
         <label
-          htmlFor={id}
-          className="absolute -top-2 left-3 bg-white px-1.5 font-inter text-sm font-medium leading-3 text-black/70"
+          htmlFor={input?.id}
+          className="font-inter text-sm font-normal leading-5 text-gray-25"
         >
-          Name
+          {label}
         </label>
       )}
+
+      <div>
+        <div className="relative">
+          <input
+            {...input}
+            className={twJoin(
+              'w-full rounded-lg border bg-white py-3 pl-11 pr-3 font-inter text-sm leading-5 text-gray-25 shadow-input placeholder:text-gray-15 focus:outline-none',
+              input.className
+            )}
+          />
+
+          {icon && (
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-15">
+              {icon}
+            </span>
+          )}
+        </div>
+
+        {error && error && (
+          <p className="font-inter text-xs font-medium leading-4 text-red-600">
+            {error}
+          </p>
+        )}
+      </div>
     </div>
   );
 };
