@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { app } from '@/Database/firebase';
+import { signOut } from '@/Database/Index';
 
 interface AuthContextType {
   user: User | null;
@@ -34,8 +35,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   const logout = async () => {
-    const auth = getAuth(app);
-    await auth.signOut();
+    await signOut();
   };
 
   return (
