@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import Header from '@/Layouts/Header';
+import Header from '@/layouts/Header';
 
 type IMainProps = {
   meta: ReactNode;
