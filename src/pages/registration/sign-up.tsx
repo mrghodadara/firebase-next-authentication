@@ -8,6 +8,7 @@ import { Button } from '@/Components/Button/Index';
 import { Input } from '@/Components/Form/Input';
 import { PasswordInput } from '@/Components/Form/PasswordInput';
 import { EmailIcon } from '@/Components/Icons/EmailIcon';
+import { Spinner } from '@/Components/Loader/Spinner';
 import { createUserInDB } from '@/Database/FireStore';
 import { signUpWithEmailAndPassword } from '@/Database/Index';
 import publicRoute from '@/hoc/publicRoute';
@@ -225,7 +226,7 @@ const Index = () => {
 
             <div className="col-span-2 mt-2 w-full">
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Loading...' : 'Sign up'}
+                {isSubmitting ? <Spinner stroke="#FFFFFF" /> : 'Sign up'}
               </Button>
             </div>
 
