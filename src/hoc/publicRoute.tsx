@@ -22,7 +22,7 @@ const publicRoute = <P extends object>(
     if (isLoading) {
       return (
         <div className="flex h-screen items-center justify-center">
-          <Spinner />
+          <Spinner height={32} width={32} />
         </div>
       );
     }

@@ -7,7 +7,9 @@ import { Button } from '@/Components/Button/Index';
 import { Input } from '@/Components/Form/Input';
 import { PasswordInput } from '@/Components/Form/PasswordInput';
 import { EmailIcon } from '@/Components/Icons/EmailIcon';
+import { Spinner } from '@/Components/Loader/Spinner';
 import { signInWithEmail } from '@/Database/Index';
+import publicRoute from '@/hoc/publicRoute';
 import { Container } from '@/layouts/Container';
 
 const Index = () => {
@@ -137,7 +139,7 @@ const Index = () => {
                 </p>
               )}
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Loading...' : 'Login'}
+                {isSubmitting ? <Spinner stroke="#FFFFFF" /> : 'Login'}
               </Button>
             </div>
 
@@ -159,4 +161,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default publicRoute(Index);
