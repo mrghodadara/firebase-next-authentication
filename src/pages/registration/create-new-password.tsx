@@ -1,19 +1,18 @@
 import { useFormik } from 'formik';
-import Link from 'next/link';
-import React, { useState } from 'react';
+import { useRouter } from 'next/router';
+import React, { useEffect } from 'react';
 import * as Yup from 'yup';
 
 import { Button } from '@/Components/Button/Index';
-import { Input } from '@/Components/Form/Input';
 import { PasswordInput } from '@/Components/Form/PasswordInput';
-import { EmailIcon } from '@/Components/Icons/EmailIcon';
 import { Spinner } from '@/Components/Loader/Spinner';
-import { signInWithEmail } from '@/Database/Index';
+import { createNewPassword } from '@/Database/Index';
 import publicRoute from '@/hoc/publicRoute';
 import { Container } from '@/layouts/Container';
 
 const Index = () => {
-  const [loginError, setLoginError] = useState<string | null>(null);
+  const router = useRouter();
+  const { oobCode } = router.query;
 
   const {
     values,
@@ -25,44 +24,51 @@ const Index = () => {
     isSubmitting,
   } = useFormik({
     initialValues: {
-      email: '',
       password: '',
+      confirmPassword: '',
     },
     validationSchema: Yup.object({
-      email: Yup.string().trim().email('Invalid Email').required('Required'),
       password: Yup.string()
         .required('Required')
         .matches(
           /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\W_]).{6,}$/,
           'Password must be at least 6 characters long and include letters, numbers, and special characters.'
         ),
+      confirmPassword: Yup.string()
+        .required('Required')
+        .oneOf(
+          [Yup.ref('password')],
+          'Confirm Password must match with Password'
+        ),
     }),
-    onSubmit: (
-      { email, password },
-      { setSubmitting, resetForm, setFieldError }
-    ) => {
+    onSubmit: ({ password }, { setSubmitting, resetForm, setFieldError }) => {
       setSubmitting(true);
-      setLoginError(null);
 
-      signInWithEmail(email, password)
+      createNewPassword(oobCode as string, password)
         .then(async (response) => {
-          if (response?.user?.uid) {
-            resetForm();
-          }
+          console.log('Response', response);
+          // if (response?.user?.uid) {
+          //   // setUser(response?.user);
+          //   router.push('/');
+          //   resetForm();
+          // }
         })
         .catch((error) => {
           switch (error.code) {
+            case 'auth/email-already-in-use':
+              setFieldError('email', 'This email is already in use.');
+              break;
             case 'auth/invalid-email':
               setFieldError('email', 'Invalid email address.');
               break;
-            case 'auth/user-disabled':
-              setFieldError('email', 'User account is disabled.');
-              break;
-            case 'auth/invalid-credential':
-              setLoginError('Please check email or password');
+            case 'auth/weak-password':
+              setFieldError(
+                'password',
+                'Password should be at least 6 characters.'
+              );
               break;
             default:
-              console.error(error.code);
+              console.error('Error signing up:', error.message);
           }
         })
         .finally(() => {
@@ -70,6 +76,12 @@ const Index = () => {
         });
     },
   });
+
+  useEffect(() => {
+    if (router?.isReady && !oobCode) {
+      router?.push('/registration/sign-in');
+    }
+  }, [router]);
 
   return (
     <Container>
@@ -79,11 +91,11 @@ const Index = () => {
           <div className="flex flex-col items-center justify-center gap-1">
             <h5 className="font-inter text-2xl font-semibold leading-8 text-gray-25">
               {/* Get Started with DataWise */}
-              Sign In
+              Create New Password
             </h5>
-            {/* <p className="font-inter text-sm font-normal leading-4 text-gray-5">
-              Create your free account
-            </p> */}
+            <p className="font-inter text-sm font-normal leading-4 text-gray-5">
+              Set your new password
+            </p>
           </div>
 
           {/* Form */}
@@ -92,26 +104,6 @@ const Index = () => {
             autoComplete="off"
             className="mt-4 grid w-full grid-cols-2 gap-3 sm:gap-x-6 sm:gap-y-4"
           >
-            <div className="col-span-2">
-              <Input
-                label="Email"
-                id="email"
-                name="email"
-                type="text"
-                placeholder="Your Email"
-                value={values?.email}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={` ${
-                  touched?.email && errors?.email
-                    ? 'border-red-600'
-                    : 'border-gray-10'
-                }`}
-                error={touched?.email && errors?.email ? errors?.email : ''}
-                icon={<EmailIcon />}
-              />
-            </div>
-
             <div className="col-span-2">
               <PasswordInput
                 label="Password"
@@ -130,37 +122,34 @@ const Index = () => {
                   touched?.password && errors?.password ? errors?.password : ''
                 }
               />
-              <div className="text-right">
-                <Link
-                  className="font-inter text-xs font-normal leading-4 text-primary"
-                  href={'/registration/forgot-password'}
-                >
-                  Forgot password
-                </Link>
-              </div>
+            </div>
+
+            <div className="col-span-2">
+              <PasswordInput
+                label="Confirm Password"
+                id="confirmPassword"
+                name="confirmPassword"
+                placeholder="Create a Strong Password"
+                value={values?.confirmPassword}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={`${
+                  touched?.confirmPassword && errors?.confirmPassword
+                    ? 'border-red-600'
+                    : 'border-gray-10'
+                }`}
+                error={
+                  touched?.confirmPassword && errors?.confirmPassword
+                    ? errors?.confirmPassword
+                    : ''
+                }
+              />
             </div>
 
             <div className="col-span-2 mt-2 w-full">
-              {loginError && (
-                <p className="mb-1 font-inter text-xs font-medium leading-4 text-red-600">
-                  {loginError}
-                </p>
-              )}
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? <Spinner stroke="#FFFFFF" /> : 'Login'}
+                {isSubmitting ? <Spinner stroke="#FFFFFF" /> : 'Save'}
               </Button>
-            </div>
-
-            <div className="col-span-2 flex flex-row items-center justify-center gap-1">
-              <p className="font-inter text-xs font-normal leading-4 text-gray-15">
-                Don’t have an account?
-              </p>
-              <Link
-                className="font-inter text-xs font-normal leading-4 text-primary"
-                href={'/registration/sign-up'}
-              >
-                Sign Up
-              </Link>
             </div>
           </form>
         </div>
