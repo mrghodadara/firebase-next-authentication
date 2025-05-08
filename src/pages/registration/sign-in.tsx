@@ -130,6 +130,14 @@ const Index = () => {
                   touched?.password && errors?.password ? errors?.password : ''
                 }
               />
+              <div className="text-right">
+                <Link
+                  className="font-inter text-xs font-normal leading-4 text-primary"
+                  href={'/registration/forgot-password'}
+                >
+                  Forgot password
+                </Link>
+              </div>
             </div>
 
             <div className="col-span-2 mt-2 w-full">
