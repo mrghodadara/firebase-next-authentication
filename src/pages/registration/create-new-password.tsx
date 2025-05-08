@@ -1,6 +1,7 @@
 import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
+import toast from 'react-hot-toast';
 import * as Yup from 'yup';
 
 import { Button } from '@/Components/Button/Index';
@@ -41,35 +42,17 @@ const Index = () => {
           'Confirm Password must match with Password'
         ),
     }),
-    onSubmit: ({ password }, { setSubmitting, resetForm, setFieldError }) => {
+    onSubmit: ({ password }, { setSubmitting, resetForm }) => {
       setSubmitting(true);
 
       createNewPassword(oobCode as string, password)
-        .then(async (response) => {
-          console.log('Response', response);
-          // if (response?.user?.uid) {
-          //   // setUser(response?.user);
-          //   router.push('/');
-          //   resetForm();
-          // }
+        .then(() => {
+          toast.success(`New password has been set successfully.`);
+          resetForm();
+          router.push('/registration/sign-in');
         })
-        .catch((error) => {
-          switch (error.code) {
-            case 'auth/email-already-in-use':
-              setFieldError('email', 'This email is already in use.');
-              break;
-            case 'auth/invalid-email':
-              setFieldError('email', 'Invalid email address.');
-              break;
-            case 'auth/weak-password':
-              setFieldError(
-                'password',
-                'Password should be at least 6 characters.'
-              );
-              break;
-            default:
-              console.error('Error signing up:', error.message);
-          }
+        .catch(() => {
+          toast.error(`Link has been expired`);
         })
         .finally(() => {
           setSubmitting(false);
