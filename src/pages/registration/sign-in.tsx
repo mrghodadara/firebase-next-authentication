@@ -117,7 +117,7 @@ const Index = () => {
                 label="Password"
                 id="password"
                 name="password"
-                placeholder="Create a Strong Password"
+                placeholder="Password"
                 value={values?.password}
                 onChange={handleChange}
                 onBlur={handleBlur}
