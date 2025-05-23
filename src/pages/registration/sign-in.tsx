@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import * as Yup from 'yup';
 
 import { Button } from '@/Components/Button/Index';
+import { SignInWithGoogleButton } from '@/Components/Button/SignInWithGoogleButton';
 import { Input } from '@/Components/Form/Input';
 import { PasswordInput } from '@/Components/Form/PasswordInput';
 import { EmailIcon } from '@/Components/Icons/EmailIcon';
@@ -146,9 +147,14 @@ const Index = () => {
                   {loginError}
                 </p>
               )}
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? <Spinner stroke="#FFFFFF" /> : 'Login'}
-              </Button>
+
+              <div className="flex flex-col gap-4">
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? <Spinner stroke="#FFFFFF" /> : 'Login'}
+                </Button>
+
+                <SignInWithGoogleButton />
+              </div>
             </div>
 
             <div className="col-span-2 flex flex-row items-center justify-center gap-1">
