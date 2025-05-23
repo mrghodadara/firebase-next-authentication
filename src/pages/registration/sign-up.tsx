@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import * as Yup from 'yup';
 
+import { GoogleButton } from '@/Components/Button/GoogleButton';
 import { Button } from '@/Components/Button/Index';
 import { Input } from '@/Components/Form/Input';
 import { PasswordInput } from '@/Components/Form/PasswordInput';
@@ -226,9 +227,13 @@ const Index = () => {
             </div>
 
             <div className="col-span-2 mt-2 w-full">
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? <Spinner stroke="#FFFFFF" /> : 'Sign up'}
-              </Button>
+              <div className="flex flex-col gap-4">
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? <Spinner stroke="#FFFFFF" /> : 'Sign up'}
+                </Button>
+
+                <GoogleButton type="SIGN-UP" />
+              </div>
             </div>
 
             <div className="col-span-2 flex flex-row items-center justify-center gap-1">
