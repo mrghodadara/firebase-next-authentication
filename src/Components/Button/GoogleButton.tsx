@@ -2,20 +2,23 @@ import React, { useState } from 'react';
 
 import { signInWithGoogle } from '@/Database/Index';
 
+import { GoogleIcon } from '../Icons/GoogleIcon';
 import { Spinner } from '../Loader/Spinner';
 import { Button } from './Index';
 
-const SignInWithGoogleButton = () => {
+interface GoogleButtonProps {
+  type?: 'SIGN-IN' | 'SIGN-UP';
+}
+
+const GoogleButton = ({ type }: GoogleButtonProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignInWithGoogle = () => {
     setIsLoading(true);
 
     signInWithGoogle()
-      .then(async (response) => {
-        console.log('response', response);
-        // if (response?.user?.uid) {
-        // }
+      .then(async (_response) => {
+        // Data added to firestore using existing function
       })
       .catch((error) => {
         console.log('error', error);
@@ -43,10 +46,18 @@ const SignInWithGoogleButton = () => {
       type="button"
       disabled={isLoading}
       onClick={() => handleSignInWithGoogle()}
+      className="flex w-full items-center justify-center gap-3 border border-gray-10 bg-white text-gray-5 shadow-sm transition-colors"
     >
-      {isLoading ? <Spinner stroke="#FFFFFF" /> : 'Sign in with Google'}
+      {isLoading ? (
+        <Spinner stroke="#D0D7DE" />
+      ) : (
+        <>
+          <GoogleIcon />
+          {type === 'SIGN-IN' ? 'Sign in with Google' : 'Sign up with Google'}
+        </>
+      )}
     </Button>
   );
 };
 
-export { SignInWithGoogleButton };
+export { GoogleButton };

@@ -3,8 +3,8 @@ import Link from 'next/link';
 import React, { useState } from 'react';
 import * as Yup from 'yup';
 
+import { GoogleButton } from '@/Components/Button/GoogleButton';
 import { Button } from '@/Components/Button/Index';
-import { SignInWithGoogleButton } from '@/Components/Button/SignInWithGoogleButton';
 import { Input } from '@/Components/Form/Input';
 import { PasswordInput } from '@/Components/Form/PasswordInput';
 import { EmailIcon } from '@/Components/Icons/EmailIcon';
@@ -153,7 +153,7 @@ const Index = () => {
                   {isSubmitting ? <Spinner stroke="#FFFFFF" /> : 'Login'}
                 </Button>
 
-                <SignInWithGoogleButton />
+                <GoogleButton type="SIGN-IN" />
               </div>
             </div>
 
