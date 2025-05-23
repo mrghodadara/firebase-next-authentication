@@ -40,6 +40,3 @@ export const createNewPassword = async (
 ) => {
   return confirmPasswordReset(auth, oobCode, newPassword);
 };
-
-// verifyPasswordResetCode()
-// confirmPasswordReset;
